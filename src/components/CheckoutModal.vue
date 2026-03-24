@@ -80,7 +80,7 @@
         </form>
 
         <div v-else class="success-step">
-          <div class="success-icon">✅</div>
+          <div class="success-icon"></div>
           <h3>¡Factura Generada!</h3>
           <p>Gracias por tu compra.</p>
           <button class="btn-primary" @click="$emit('complete')">
@@ -143,7 +143,7 @@ const generatePDF = async () => {
     doc.setTextColor(creamR, creamG, creamB)
     doc.setFontSize(24)
     doc.setFont('helvetica', 'bold')
-    doc.text('ELECTRONICOS COLOCHO', 105, 20, { align: 'center' })
+    doc.text('ELECTRONICOS', 105, 20, { align: 'center' })
     
     doc.setFontSize(12)
     doc.setFont('helvetica', 'normal')
@@ -279,7 +279,7 @@ const generatePDF = async () => {
     doc.setFontSize(9)
     doc.text('Gracias por su compra', 105, yPos + 10, { align: 'center' })
     doc.text('factura electronica', 105, yPos + 15, { align: 'center' })
-    doc.text('ELECTRONICOS COLOCHO', 105, yPos + 20, { align: 'center' })
+    doc.text('ELECTRONICOS', 105, yPos + 20, { align: 'center' })
 
     // Guardar PDF
     doc.save(`Factura-${invoiceNumber}.pdf`)

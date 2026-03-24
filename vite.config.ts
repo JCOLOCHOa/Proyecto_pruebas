@@ -8,7 +8,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vite.dev/config/
 export default defineConfig({
 
-  base: 'Proyecto_prueba',
+  base: '/Proyecto_pruebas/',
   plugins: [
     vue(),
     vueJsx(),
