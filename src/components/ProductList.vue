@@ -1,147 +1,249 @@
 <template>
-  <div class="products">
-    <div 
-      v-for="product in products" 
-      :key="product.id"
-      class="product-card"
-      :ref="(el) => setCardRef(el, product.id)"
-    >
-      <div class="product-image-wrapper" @click="openDetail(product)">
-        <img :src="product.image" />
-        <span v-if="product.stock < 5" class="stock-badge low">
-          ¡Solo {{ product.stock }}!
-        </span>
+  <div class="products-container">
+    <div class="products-header">
+      <h2>{{ title }}</h2>
+      <div class="sort-controls">
+        <select v-model="sortBy" class="sort-select">
+          <option value="featured">Destacados</option>
+          <option value="price-low">Precio: Menor a Mayor</option>
+          <option value="price-high">Precio: Mayor a Menor</option>
+          <option value="name">Nombre A-Z</option>
+          <option value="stock">Disponibilidad</option>
+        </select>
       </div>
+    </div>
 
-      <h3>{{ product.name }}</h3>
-      <p class="price">Q{{ product.price }}</p>
-      
-      <button 
-        @click="(e) => addToCartWithAnimation(e, product)"
-        :disabled="product.stock === 0"
-        :class="{ 'disabled': product.stock === 0 }"
+    <div v-if="sortedProducts.length === 0" class="empty-state">
+      <p>No se encontraron productos en esta categoría</p>
+    </div>
+
+    <div v-else class="products">
+      <div 
+        v-for="product in sortedProducts" 
+        :key="product.id"
+        class="product-card"
+        :ref="(el) => setCardRef(el, product.id)"
       >
-        <span v-if="product.stock === 0">Agotado</span>
-        <span v-else>Agregar al carrito</span>
-      </button>
-    </div>
-  </div>
+        <div class="product-image-wrapper" @click="openDetail(product)">
+          <img :src="product.image" />
+          <span v-if="product.stock < 5" class="stock-badge low">
+            ¡Solo {{ product.stock }}!
+          </span>
+          <span v-else-if="isNew(product)" class="stock-badge new">
+            Nuevo
+          </span>
+          <span v-else-if="isOffer(product)" class="stock-badge offer">
+            Oferta
+          </span>
+        </div>
 
-  <Transition name="fade">
-    <div v-if="selectedProduct" class="modal" @click.self="closeDetail">
-      <div class="modal-content">
-        <button class="close-btn" @click="closeDetail">×</button>
-        <img :src="selectedProduct.image" />
-        <h2>{{ selectedProduct.name }}</h2>
-        <p class="description">{{ selectedProduct.description }}</p>
-        <p class="modal-price">Q{{ selectedProduct.price }}</p>
-        <p class="stock">Stock disponible: {{ selectedProduct.stock }}</p>
+        <div class="product-info">
+          <span class="category-tag">{{ getCategoryName(product.category) }}</span>
+          <h3>{{ product.name }}</h3>
+          <p class="price">Q{{ product.price }}</p>
+        </div>
+        
+        <button 
+          @click="(e) => addToCartWithAnimation(e, product)"
+          :disabled="product.stock === 0"
+          :class="{ 'disabled': product.stock === 0 }"
+        >
+          <span v-if="product.stock === 0">Agotado</span>
+          <span v-else>Agregar al carrito</span>
+        </button>
       </div>
     </div>
-  </Transition>
 
-  <div v-if="flyingItem" class="flying-item" :style="flyingStyle">
-    <img :src="flyingItem.image" />
+    <Transition name="fade">
+      <div v-if="selectedProduct" class="modal" @click.self="closeDetail">
+        <div class="modal-content">
+          <button class="close-btn" @click="closeDetail">×</button>
+          <span class="modal-category">{{ getCategoryName(selectedProduct.category) }}</span>
+          <img :src="selectedProduct.image" />
+          <h2>{{ selectedProduct.name }}</h2>
+          <p class="description">{{ selectedProduct.description }}</p>
+          <p class="modal-price">Q{{ selectedProduct.price }}</p>
+          <p class="stock">Stock disponible: {{ selectedProduct.stock }}</p>
+        </div>
+      </div>
+    </Transition>
+
+    <div v-if="flyingItem" class="flying-item" :style="flyingStyle">
+      <img :src="flyingItem.image" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, nextTick } from 'vue'
+import { ref, reactive, nextTick, computed } from 'vue';
+import { categories, type Category } from '../data/products';
 
 interface Product {
-  id: number
-  name: string
-  price: number
-  image: string
-  stock: number
-  description?: string
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  stock: number;
+  description?: string;
+  category: Category;
+  createdAt?: string;
 }
 
-defineProps<{
-  products: Product[]
-}>()
+const props = defineProps<{
+  products: Product[];
+  title: string;
+  activeTab: string;
+}>();
 
-const emit = defineEmits(['add-to-cart'])
+const emit = defineEmits(['add-to-cart']);
 
-const selectedProduct = ref<Product | null>(null)
-const cardRefs = reactive<Record<number, HTMLElement>>({})
+const selectedProduct = ref<Product | null>(null);
+const cardRefs = reactive<Record<number, HTMLElement>>({});
+const sortBy = ref('featured');
 
-interface FlyingItem {
-  id: number
-  name: string
-  price: number
-  image: string
-  stock: number
-  description?: string
-}
-
-const flyingItem = ref<FlyingItem | null>(null)
+const flyingItem = ref<Product | null>(null);
 const flyingStyle = reactive({
   left: '0px',
   top: '0px',
   width: '0px',
   height: '0px',
   opacity: 0
-})
+});
+
+const sortedProducts = computed(() => {
+  let result = [...props.products];
+  
+  // Filtrar por tab
+  if (props.activeTab === 'offers') {
+    result = result.filter(p => p.price < 500);
+  } else if (props.activeTab === 'new') {
+    // Simulando productos nuevos (últimos 5)
+    result = result.slice(-5);
+  } else if (props.activeTab === 'bestsellers') {
+    // Simulando más vendidos (stock bajo = más vendido)
+    result = result.sort((a, b) => a.stock - b.stock);
+  }
+  
+  // Ordenar
+  switch (sortBy.value) {
+    case 'price-low':
+      return result.sort((a, b) => a.price - b.price);
+    case 'price-high':
+      return result.sort((a, b) => b.price - a.price);
+    case 'name':
+      return result.sort((a, b) => a.name.localeCompare(b.name));
+    case 'stock':
+      return result.sort((a, b) => b.stock - a.stock);
+    default:
+      return result;
+  }
+});
+
+const isNew = (product: Product) => product.id > 25;
+const isOffer = (product: Product) => product.price < 200;
+
+const getCategoryName = (category: Category) => {
+  return categories[category]?.name || category;
+};
 
 const setCardRef = (el: unknown, id: number) => {
   if (el && typeof el === 'object' && el !== null) {
-    cardRefs[id] = el as HTMLElement
+    cardRefs[id] = el as HTMLElement;
   }
-}
+};
 
 const openDetail = (product: Product) => {
-  selectedProduct.value = product
-}
+  selectedProduct.value = product;
+};
 
 const closeDetail = () => {
-  selectedProduct.value = null
-}
+  selectedProduct.value = null;
+};
 
 const addToCartWithAnimation = async (event: MouseEvent, product: Product) => {
-  if (product.stock === 0) return
+  if (product.stock === 0) return;
 
-  const card = cardRefs[product.id]
-  const img = card?.querySelector('img') as HTMLElement | null
-  const cartIcon = document.querySelector('.cart h2') as HTMLElement | null
+  const card = cardRefs[product.id];
+  const img = card?.querySelector('img') as HTMLElement | null;
+  const cartIcon = document.querySelector('.cart h2') as HTMLElement | null;
 
   if (!img || !cartIcon) {
-    emit('add-to-cart', product)
-    return
+    emit('add-to-cart', product);
+    return;
   }
 
-  const imgRect = img.getBoundingClientRect()
-  const cartRect = cartIcon.getBoundingClientRect()
+  const imgRect = img.getBoundingClientRect();
+  const cartRect = cartIcon.getBoundingClientRect();
 
-  flyingItem.value = { ...product }
-  flyingStyle.left = imgRect.left + 'px'
-  flyingStyle.top = imgRect.top + 'px'
-  flyingStyle.width = imgRect.width + 'px'
-  flyingStyle.height = imgRect.height + 'px'
-  flyingStyle.opacity = 1
+  flyingItem.value = { ...product };
+  flyingStyle.left = imgRect.left + 'px';
+  flyingStyle.top = imgRect.top + 'px';
+  flyingStyle.width = imgRect.width + 'px';
+  flyingStyle.height = imgRect.height + 'px';
+  flyingStyle.opacity = 1;
 
-  await nextTick()
-
-  setTimeout(() => {
-    flyingStyle.left = cartRect.left + 'px'
-    flyingStyle.top = cartRect.top + 'px'
-    flyingStyle.width = '40px'
-    flyingStyle.height = '40px'
-    flyingStyle.opacity = 0.8
-  }, 50)
+  await nextTick();
 
   setTimeout(() => {
-    flyingStyle.opacity = 0
-    emit('add-to-cart', product)
+    flyingStyle.left = cartRect.left + 'px';
+    flyingStyle.top = cartRect.top + 'px';
+    flyingStyle.width = '40px';
+    flyingStyle.height = '40px';
+    flyingStyle.opacity = 0.8;
+  }, 50);
+
+  setTimeout(() => {
+    flyingStyle.opacity = 0;
+    emit('add-to-cart', product);
     
     setTimeout(() => {
-      flyingItem.value = null
-    }, 300)
-  }, 600)
-}
+      flyingItem.value = null;
+    }, 300);
+  }, 600);
+};
 </script>
 
 <style scoped>
+.products-container {
+  width: 100%;
+}
+
+.products-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.products-header h2 {
+  color: #0D1821;
+  font-size: 1.5rem;
+}
+
+.sort-select {
+  padding: 10px 20px;
+  border: 2px solid #B4CDED;
+  border-radius: 25px;
+  background: #ffffff;
+  color: #0D1821;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.sort-select:focus {
+  border-color: #344966;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #344966;
+  font-size: 1.1rem;
+}
+
 .products {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -191,8 +293,6 @@ const addToCartWithAnimation = async (event: MouseEvent, product: Product) => {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #BFCC94;
-  color: #0D1821;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.75rem;
@@ -205,25 +305,49 @@ const addToCartWithAnimation = async (event: MouseEvent, product: Product) => {
   animation: pulse 2s infinite;
 }
 
+.stock-badge.new {
+  background: #BFCC94;
+  color: #0D1821;
+}
+
+.stock-badge.offer {
+  background: #344966;
+  color: #F0F4EF;
+}
+
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
 }
 
+.product-info {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.category-tag {
+  font-size: 0.75rem;
+  color: #344966;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
 .product-card h3 {
-  padding: 20px 20px 10px;
   font-size: 1.1rem;
   font-weight: 600;
   color: #0D1821;
   line-height: 1.4;
+  margin-bottom: 10px;
+  flex: 1;
 }
 
 .price {
-  padding: 0 20px;
   font-size: 1.5rem;
   font-weight: 700;
   color: #344966;
-  margin-bottom: 15px;
 }
 
 button {
@@ -280,6 +404,18 @@ button.disabled {
 @keyframes slideUp {
   from { transform: translateY(50px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-category {
+  display: inline-block;
+  background: #BFCC94;
+  color: #0D1821;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-transform: uppercase;
 }
 
 .close-btn {
@@ -356,5 +492,16 @@ button.disabled {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .products-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .products {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
 }
 </style>

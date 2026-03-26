@@ -4,38 +4,32 @@
       <div class="header-content">
         <img src="https://png.pngtree.com/png-vector/20220922/ourmid/pngtree-cart-shop-logo-supermarket-cart-market-vector-png-image_39324060.png" class="logo" />
         <div class="header-text">
-          <h1>ELECTRONICOS</h1>
-          <p>Tecnología de punta al mejor precio</p>
+          <h1>{{ categoryName }}</h1>
+          <p>Productos seleccionados</p>
         </div>
       </div>
       <nav class="header-nav">
-        <router-link to="/" class="nav-link active">Tienda</router-link>
+        <router-link to="/" class="nav-link">Tienda</router-link>
         <router-link to="/ofertas" class="nav-link">Ofertas</router-link>
         <router-link to="/nuevos" class="nav-link">Nuevos</router-link>
         <router-link to="/about" class="nav-link">Nosotros</router-link>
       </nav>
     </header>
 
-    <SearchBar @search="updateSearch" />
-
-    <CategoryMenu 
-      :products="products"
-      :selected-category="selectedCategory"
-      :active-tab="activeTab"
-      @select-category="selectCategory"
-      @select-tab="selectTab"
-    />
+    <div class="category-hero" :style="heroStyle">
+      <h2>{{ categoryIcon }} {{ categoryName }}</h2>
+      <p>{{ filteredProducts.length }} productos disponibles</p>
+    </div>
 
     <div class="layout">
       <div class="products-section">
         <ProductList 
           :products="filteredProducts" 
-          :title="currentTitle"
-          :active-tab="activeTab"
+          :title="categoryName"
+          active-tab="all"
           @add-to-cart="addToCart" 
         />
       </div>
-
       <div class="cart-section">
         <Cart 
           :cart="cart"
@@ -58,35 +52,22 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { productsData, type Category } from '../data/products';
-import SearchBar from '../components/SearchBar.vue';
+import { useRoute } from 'vue-router';
+import { productsData, categories, type Product, type Category } from '../data/products';
 import ProductList from '../components/ProductList.vue';
 import Cart from '../components/Cart.vue';
 import CheckoutModal from '../components/CheckoutModal.vue';
-import CategoryMenu from '../components/CategoryMenu.vue';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  stock: number;
-  description?: string;
-  category: Category;
-}
 
 interface CartItem extends Product {
   qty: number;
 }
 
+const route = useRoute();
 const products = ref<Product[]>(productsData);
 const cart = ref<CartItem[]>([]);
-const searchText = ref('');
 const showCheckout = ref(false);
-const selectedCategory = ref<Category | null>(null);
-const activeTab = ref('all');
 
-// Cargar carrito desde localStorage
+// Cargar carrito
 const savedCart = localStorage.getItem('cart');
 if (savedCart) {
   try {
@@ -96,66 +77,43 @@ if (savedCart) {
   }
 }
 
-// Guardar carrito en localStorage
+// Guardar carrito
 watch(cart, (newCart) => {
   localStorage.setItem('cart', JSON.stringify(newCart));
 }, { deep: true });
 
-const updateSearch = (text: string) => {
-  searchText.value = text;
-};
+const currentCategory = computed(() => route.params.category as Category);
 
-const selectCategory = (category: Category | null) => {
-  selectedCategory.value = category;
-};
+const categoryName = computed(() => {
+  return categories[currentCategory.value]?.name || 'Categoría';
+});
 
-const selectTab = (tab: string) => {
-  activeTab.value = tab;
-};
+const categoryIcon = computed(() => {
+  return categories[currentCategory.value]?.icon || '📦';
+});
 
-const currentTitle = computed(() => {
-  if (searchText.value) return `Resultados para "${searchText.value}"`;
-  if (selectedCategory.value) {
-    const names: Record<string, string> = {
-      laptops: 'Laptops',
-      computadoras: 'Computadoras',
-      perifericos: 'Periféricos',
-      audio: 'Audio',
-      monitores: 'Monitores',
-      almacenamiento: 'Almacenamiento',
-      accesorios: 'Accesorios',
-      'celulares-tablets': 'Celulares y Tablets',
-      impresion: 'Impresión',
-      redes: 'Redes',
-      mobiliario: 'Mobiliario',
-      camaras: 'Cámaras'
-    };
-    return names[selectedCategory.value] || selectedCategory.value;
-  }
-  if (activeTab.value === 'offers') return 'Ofertas Especiales';
-  if (activeTab.value === 'new') return 'Nuevos Productos';
-  if (activeTab.value === 'bestsellers') return 'Más Vendidos';
-  return 'Todos los Productos';
+const heroStyle = computed(() => {
+  const colors: Record<string, string> = {
+    laptops: '#344966',
+    computadoras: '#0D1821',
+    perifericos: '#BFCC94',
+    audio: '#B4CDED',
+    monitores: '#344966',
+    almacenamiento: '#0D1821',
+    accesorios: '#BFCC94',
+    'celulares-tablets': '#B4CDED',
+    impresion: '#344966',
+    redes: '#0D1821',
+    mobiliario: '#BFCC94',
+    camaras: '#B4CDED'
+  };
+  return {
+    background: `linear-gradient(135deg, ${colors[currentCategory.value] || '#344966'} 0%, #0D1821 100%)`
+  };
 });
 
 const filteredProducts = computed(() => {
-  let result = products.value;
-  
-  // Filtrar por categoría
-  if (selectedCategory.value) {
-    result = result.filter(p => p.category === selectedCategory.value);
-  }
-  
-  // Filtrar por búsqueda
-  if (searchText.value) {
-    const search = searchText.value.toLowerCase();
-    result = result.filter(p => 
-      p.name.toLowerCase().includes(search) ||
-      p.description?.toLowerCase().includes(search)
-    );
-  }
-  
-  return result;
+  return products.value.filter(p => p.category === currentCategory.value);
 });
 
 const addToCart = (product: Product) => {
@@ -180,8 +138,6 @@ const increaseQty = (id: number) => {
   const product = products.value.find(p => p.id === id);
   if (item && product && item.qty < product.stock) {
     item.qty++;
-  } else {
-    alert('Stock máximo alcanzado');
   }
 };
 
@@ -199,7 +155,7 @@ const completeCheckout = () => {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   max-width: 1400px;
   margin: 0 auto;
@@ -237,6 +193,7 @@ const completeCheckout = () => {
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
+  text-transform: capitalize;
 }
 
 .header-text p {
@@ -269,6 +226,24 @@ const completeCheckout = () => {
 .nav-link.active {
   background: #BFCC94;
   color: #0D1821;
+}
+
+.category-hero {
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #F0F4EF;
+}
+
+.category-hero h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.category-hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
 }
 
 .layout {
@@ -318,9 +293,8 @@ const completeCheckout = () => {
     width: 100%;
   }
   
-  .nav-link {
-    padding: 8px 16px;
-    font-size: 0.9rem;
+  .category-hero h2 {
+    font-size: 1.8rem;
   }
 }
 </style>
