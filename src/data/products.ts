@@ -23,18 +23,18 @@ export interface Product {
 }
 
 export const categories: Record<Category, { name: string; icon: string }> = {
-    laptops: { name: 'Laptops', icon: '💻' },
-    computadoras: { name: 'Computadoras', icon: '🖥️' },
-    perifericos: { name: 'Periféricos', icon: '🖱️' },
-    audio: { name: 'Audio', icon: '🎧' },
-    monitores: { name: 'Monitores', icon: '🖥️' },
-    almacenamiento: { name: 'Almacenamiento', icon: '💾' },
-    accesorios: { name: 'Accesorios', icon: '🔌' },
-    'celulares-tablets': { name: 'Celulares y Tablets', icon: '📱' },
-    impresion: { name: 'Impresión', icon: '🖨️' },
-    redes: { name: 'Redes', icon: '🌐' },
-    mobiliario: { name: 'Mobiliario', icon: '🪑' },
-    camaras: { name: 'Cámaras', icon: '📷' }
+    laptops: { name: 'Laptops', icon: 'laptop' },
+    computadoras: { name: 'Computadoras', icon: 'desktop' },
+    perifericos: { name: 'Periféricos', icon: 'mouse' },
+    audio: { name: 'Audio', icon: 'headphones' },
+    monitores: { name: 'Monitores', icon: 'monitor' },
+    almacenamiento: { name: 'Almacenamiento', icon: 'storage' },
+    accesorios: { name: 'Accesorios', icon: 'cable' },
+    'celulares-tablets': { name: 'Celulares y Tablets', icon: 'mobile' },
+    impresion: { name: 'Impresión', icon: 'printer' },
+    redes: { name: 'Redes', icon: 'wifi' },
+    mobiliario: { name: 'Mobiliario', icon: 'chair' },
+    camaras: { name: 'Cámaras', icon: 'camera' }
 };
 
 export const productsData: Product[] = [

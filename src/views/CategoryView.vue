@@ -17,7 +17,64 @@
     </header>
 
     <div class="category-hero" :style="heroStyle">
-      <h2>{{ categoryIcon }} {{ categoryName }}</h2>
+      <svg class="hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <g v-if="currentIcon === 'laptop'">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="2" y1="20" x2="22" y2="20"></line>
+        </g>
+        <g v-else-if="currentIcon === 'desktop'">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </g>
+        <g v-else-if="currentIcon === 'mouse'">
+          <rect x="6" y="3" width="12" height="18" rx="6" ry="6"></rect>
+          <line x1="12" y1="7" x2="12" y2="11"></line>
+        </g>
+        <g v-else-if="currentIcon === 'headphones'">
+          <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+        </g>
+        <g v-else-if="currentIcon === 'monitor'">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </g>
+        <g v-else-if="currentIcon === 'storage'">
+          <rect x="4" y="3" width="16" height="18" rx="2" ry="2"></rect>
+          <circle cx="12" cy="10" r="2"></circle>
+        </g>
+        <g v-else-if="currentIcon === 'cable'">
+          <path d="M4 22l4-10 4 10M12 22l4-10 4 10"></path>
+        </g>
+        <g v-else-if="currentIcon === 'mobile'">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </g>
+        <g v-else-if="currentIcon === 'printer'">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </g>
+        <g v-else-if="currentIcon === 'wifi'">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+          <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </g>
+        <g v-else-if="currentIcon === 'chair'">
+          <path d="M6 19v2M18 19v2M6 11V7a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v4"></path>
+          <path d="M6 11h12v8H6z"></path>
+        </g>
+        <g v-else-if="currentIcon === 'camera'">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </g>
+        <g v-else>
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        </g>
+      </svg>
+      <h2>{{ categoryName }}</h2>
       <p>{{ filteredProducts.length }} productos disponibles</p>
     </div>
 
@@ -67,7 +124,6 @@ const products = ref<Product[]>(productsData);
 const cart = ref<CartItem[]>([]);
 const showCheckout = ref(false);
 
-// Cargar carrito
 const savedCart = localStorage.getItem('cart');
 if (savedCart) {
   try {
@@ -77,7 +133,6 @@ if (savedCart) {
   }
 }
 
-// Guardar carrito
 watch(cart, (newCart) => {
   localStorage.setItem('cart', JSON.stringify(newCart));
 }, { deep: true });
@@ -88,8 +143,8 @@ const categoryName = computed(() => {
   return categories[currentCategory.value]?.name || 'Categoría';
 });
 
-const categoryIcon = computed(() => {
-  return categories[currentCategory.value]?.icon || '📦';
+const currentIcon = computed(() => {
+  return categories[currentCategory.value]?.icon || 'box';
 });
 
 const heroStyle = computed(() => {
@@ -234,6 +289,12 @@ const completeCheckout = () => {
   margin-bottom: 30px;
   text-align: center;
   color: #F0F4EF;
+}
+
+.hero-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
 }
 
 .category-hero h2 {

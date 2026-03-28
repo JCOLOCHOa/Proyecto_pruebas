@@ -17,7 +17,10 @@
     </header>
 
     <div class="offers-hero">
-      <h2>🔥 Hasta 50% de descuento</h2>
+      <svg class="hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      <h2>Hasta 50% de descuento</h2>
       <p>Productos seleccionados con precios increíbles</p>
     </div>
 
@@ -52,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { productsData, type Product, type Category } from '../data/products';
+import { productsData, type Product } from '../data/products';
 import ProductList from '../components/ProductList.vue';
 import Cart from '../components/Cart.vue';
 import CheckoutModal from '../components/CheckoutModal.vue';
@@ -65,7 +68,6 @@ const products = ref<Product[]>(productsData);
 const cart = ref<CartItem[]>([]);
 const showCheckout = ref(false);
 
-// Cargar carrito
 const savedCart = localStorage.getItem('cart');
 if (savedCart) {
   try {
@@ -75,7 +77,6 @@ if (savedCart) {
   }
 }
 
-// Guardar carrito
 watch(cart, (newCart) => {
   localStorage.setItem('cart', JSON.stringify(newCart));
 }, { deep: true });
@@ -202,6 +203,12 @@ const completeCheckout = () => {
   margin-bottom: 30px;
   text-align: center;
   color: #0D1821;
+}
+
+.hero-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
 }
 
 .offers-hero h2 {

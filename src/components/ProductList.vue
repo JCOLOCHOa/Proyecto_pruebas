@@ -14,6 +14,11 @@
     </div>
 
     <div v-if="sortedProducts.length === 0" class="empty-state">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
       <p>No se encontraron productos en esta categoría</p>
     </div>
 
@@ -27,7 +32,7 @@
         <div class="product-image-wrapper" @click="openDetail(product)">
           <img :src="product.image" />
           <span v-if="product.stock < 5" class="stock-badge low">
-            ¡Solo {{ product.stock }}!
+            Solo {{ product.stock }} disponibles
           </span>
           <span v-else-if="isNew(product)" class="stock-badge new">
             Nuevo
@@ -57,7 +62,12 @@
     <Transition name="fade">
       <div v-if="selectedProduct" class="modal" @click.self="closeDetail">
         <div class="modal-content">
-          <button class="close-btn" @click="closeDetail">×</button>
+          <button class="close-btn" @click="closeDetail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <span class="modal-category">{{ getCategoryName(selectedProduct.category) }}</span>
           <img :src="selectedProduct.image" />
           <h2>{{ selectedProduct.name }}</h2>
@@ -86,7 +96,6 @@ interface Product {
   stock: number;
   description?: string;
   category: Category;
-  createdAt?: string;
 }
 
 const props = defineProps<{
@@ -113,18 +122,14 @@ const flyingStyle = reactive({
 const sortedProducts = computed(() => {
   let result = [...props.products];
   
-  // Filtrar por tab
   if (props.activeTab === 'offers') {
     result = result.filter(p => p.price < 500);
   } else if (props.activeTab === 'new') {
-    // Simulando productos nuevos (últimos 5)
     result = result.slice(-5);
   } else if (props.activeTab === 'bestsellers') {
-    // Simulando más vendidos (stock bajo = más vendido)
     result = result.sort((a, b) => a.stock - b.stock);
   }
   
-  // Ordenar
   switch (sortBy.value) {
     case 'price-low':
       return result.sort((a, b) => a.price - b.price);
@@ -241,7 +246,13 @@ const addToCartWithAnimation = async (event: MouseEvent, product: Product) => {
   text-align: center;
   padding: 60px 20px;
   color: #344966;
-  font-size: 1.1rem;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
 }
 
 .products {
@@ -376,7 +387,6 @@ button.disabled {
   cursor: not-allowed;
 }
 
-/* Modal */
 .modal {
   position: fixed;
   top: 0;
@@ -427,11 +437,21 @@ button.disabled {
   border-radius: 50%;
   background: #F0F4EF;
   border: none;
-  font-size: 1.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #B4CDED;
+}
+
+.close-btn svg {
+  width: 20px;
+  height: 20px;
+  color: #0D1821;
 }
 
 .modal-content img {
@@ -467,7 +487,6 @@ button.disabled {
   font-weight: 600;
 }
 
-/* Elemento volador */
 .flying-item {
   position: fixed;
   z-index: 9999;

@@ -1,0 +1,44 @@
+﻿
+> proyecto-prueba@0.0.0 lint
+> run-s lint:*
+
+
+> proyecto-prueba@0.0.0 lint:oxlint
+> oxlint . --fix
+
+Found 0 warnings and 0 errors.
+Finished in 16ms on 24 files with 101 rules using 16 threads.
+
+> proyecto-prueba@0.0.0 lint:eslint
+> eslint . --fix --cache
+
+
+C:\vue\Proyecto_prueba\src\components\Cart.vue
+   1:1  error  Component name "Cart" should always be multi-word  vue/multi-word-component-names
+  40:9  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+C:\vue\Proyecto_prueba\src\components\CategoryMenu.vue
+  126:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\vue\Proyecto_prueba\src\components\CheckoutModal.vue
+    3:5  error  The element inside `<transition>` is expected to have a `v-if` or `v-show` directive  vue/require-toggle-inside-transition
+  100:9  error  Unexpected any. Specify a different type                                              @typescript-eslint/no-explicit-any
+  103:7  error  'emit' is assigned a value but never used                                             @typescript-eslint/no-unused-vars
+
+C:\vue\Proyecto_prueba\src\env.d.ts
+  5:38  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+  5:42  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+  5:46  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+
+C:\vue\Proyecto_prueba\src\views\CategoryView.vue
+   17:5  error  Parsing error: x-invalid-end-tag  vue/no-parsing-error
+  107:3  error  Parsing error: x-invalid-end-tag  vue/no-parsing-error
+
+Ô£û 11 problems (11 errors, 0 warnings)
+

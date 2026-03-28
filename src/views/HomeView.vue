@@ -86,7 +86,6 @@ const showCheckout = ref(false);
 const selectedCategory = ref<Category | null>(null);
 const activeTab = ref('all');
 
-// Cargar carrito desde localStorage
 const savedCart = localStorage.getItem('cart');
 if (savedCart) {
   try {
@@ -96,7 +95,6 @@ if (savedCart) {
   }
 }
 
-// Guardar carrito en localStorage
 watch(cart, (newCart) => {
   localStorage.setItem('cart', JSON.stringify(newCart));
 }, { deep: true });
@@ -141,12 +139,10 @@ const currentTitle = computed(() => {
 const filteredProducts = computed(() => {
   let result = products.value;
   
-  // Filtrar por categoría
   if (selectedCategory.value) {
     result = result.filter(p => p.category === selectedCategory.value);
   }
   
-  // Filtrar por búsqueda
   if (searchText.value) {
     const search = searchText.value.toLowerCase();
     result = result.filter(p => 
@@ -316,11 +312,6 @@ const completeCheckout = () => {
   .header-nav {
     justify-content: center;
     width: 100%;
-  }
-  
-  .nav-link {
-    padding: 8px 16px;
-    font-size: 0.9rem;
   }
 }
 </style>

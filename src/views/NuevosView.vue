@@ -17,7 +17,10 @@
     </header>
 
     <div class="new-hero">
-      <h2>✨ Recién Llegados</h2>
+      <svg class="hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+      <h2>Recién Llegados</h2>
       <p>Descubre los productos más recientes de nuestro catálogo</p>
     </div>
 
@@ -65,7 +68,6 @@ const products = ref<Product[]>(productsData);
 const cart = ref<CartItem[]>([]);
 const showCheckout = ref(false);
 
-// Cargar carrito
 const savedCart = localStorage.getItem('cart');
 if (savedCart) {
   try {
@@ -75,12 +77,10 @@ if (savedCart) {
   }
 }
 
-// Guardar carrito
 watch(cart, (newCart) => {
   localStorage.setItem('cart', JSON.stringify(newCart));
 }, { deep: true });
 
-// Últimos 6 productos como "nuevos"
 const newProducts = computed(() => {
   return products.value.slice(-6);
 });
@@ -203,6 +203,12 @@ const completeCheckout = () => {
   margin-bottom: 30px;
   text-align: center;
   color: #F0F4EF;
+}
+
+.hero-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
 }
 
 .new-hero h2 {

@@ -6,9 +6,11 @@
         @click="isOpen = !isOpen"
         :class="{ 'active': isOpen }"
       >
-        <span></span>
-        <span></span>
-        <span></span>
+        <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
         <span class="menu-text">Categorías</span>
       </button>
       
@@ -19,6 +21,12 @@
           @click="$emit('select-tab', tab.id)"
           :class="['tab-btn', { active: activeTab === tab.id }]"
         >
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path v-if="tab.id === 'all'" d="M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18"/>
+            <path v-if="tab.id === 'offers'" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            <path v-if="tab.id === 'new'" d="M12 3v18M3 12h18M7 8l10 8M7 16l10-8"/>
+            <path v-if="tab.id === 'bestsellers'" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
           {{ tab.name }}
         </button>
       </div>
@@ -33,7 +41,61 @@
             @click="selectCategory(key as Category)"
             :class="['category-btn', { active: selectedCategory === key }]"
           >
-            <span class="category-icon">{{ cat.icon }}</span>
+            <svg class="category-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <g v-if="cat.icon === 'laptop'">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="2" y1="20" x2="22" y2="20"></line>
+              </g>
+              <g v-if="cat.icon === 'desktop'">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </g>
+              <g v-if="cat.icon === 'mouse'">
+                <rect x="6" y="3" width="12" height="18" rx="6" ry="6"></rect>
+                <line x1="12" y1="7" x2="12" y2="11"></line>
+              </g>
+              <g v-if="cat.icon === 'headphones'">
+                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+              </g>
+              <g v-if="cat.icon === 'monitor'">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </g>
+              <g v-if="cat.icon === 'storage'">
+                <rect x="4" y="3" width="16" height="18" rx="2" ry="2"></rect>
+                <circle cx="12" cy="10" r="2"></circle>
+                <line x1="12" y1="14" x2="12" y2="14"></line>
+              </g>
+              <g v-if="cat.icon === 'cable'">
+                <path d="M4 22l4-10 4 10M12 22l4-10 4 10"></path>
+              </g>
+              <g v-if="cat.icon === 'mobile'">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </g>
+              <g v-if="cat.icon === 'printer'">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </g>
+              <g v-if="cat.icon === 'wifi'">
+                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                <line x1="12" y1="20" x2="12.01" y2="20"></line>
+              </g>
+              <g v-if="cat.icon === 'chair'">
+                <path d="M6 19v2M18 19v2M6 11V7a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v4"></path>
+                <path d="M6 11h12v8H6z"></path>
+              </g>
+              <g v-if="cat.icon === 'camera'">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </g>
+            </svg>
             <span class="category-name">{{ cat.name }}</span>
             <span class="category-count">{{ getCount(key as Category) }}</span>
           </button>
@@ -42,7 +104,11 @@
             @click="selectCategory(null)"
             :class="['category-btn', 'all-btn', { active: selectedCategory === null }]"
           >
-            <span class="category-icon">🛍️</span>
+            <svg class="category-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
             <span class="category-name">Todos los Productos</span>
             <span class="category-count">{{ totalProducts }}</span>
           </button>
@@ -123,27 +189,13 @@ const selectCategory = (category: Category | null) => {
   box-shadow: 0 8px 20px rgba(52, 73, 102, 0.3);
 }
 
-.menu-toggle span:first-child,
-.menu-toggle span:nth-child(2),
-.menu-toggle span:nth-child(3) {
-  display: block;
-  width: 18px;
-  height: 2px;
-  background: currentColor;
-  border-radius: 2px;
-  transition: all 0.3s ease;
+.icon-menu {
+  width: 20px;
+  height: 20px;
 }
 
-.menu-toggle.active span:first-child {
-  transform: rotate(45deg) translate(5px, 5px);
-}
-
-.menu-toggle.active span:nth-child(2) {
-  opacity: 0;
-}
-
-.menu-toggle.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
+.menu-text {
+  font-size: 0.95rem;
 }
 
 .quick-filters {
@@ -153,6 +205,9 @@ const selectCategory = (category: Category | null) => {
 }
 
 .tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 20px;
   border: 2px solid #B4CDED;
   background: #ffffff;
@@ -161,6 +216,11 @@ const selectCategory = (category: Category | null) => {
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
+}
+
+.tab-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .tab-btn:hover {
@@ -182,7 +242,7 @@ const selectCategory = (category: Category | null) => {
 
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 12px;
 }
 
@@ -209,8 +269,10 @@ const selectCategory = (category: Category | null) => {
   color: #F0F4EF;
 }
 
-.category-icon {
-  font-size: 1.5rem;
+.category-icon-svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .category-name {
@@ -234,6 +296,10 @@ const selectCategory = (category: Category | null) => {
 .all-btn {
   background: linear-gradient(135deg, #BFCC94 0%, #B4CDED 100%);
   grid-column: 1 / -1;
+}
+
+.all-btn.active {
+  background: linear-gradient(135deg, #344966 0%, #0D1821 100%);
 }
 
 .slide-enter-active,
