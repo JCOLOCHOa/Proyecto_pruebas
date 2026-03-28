@@ -67,7 +67,6 @@
               <g v-if="cat.icon === 'storage'">
                 <rect x="4" y="3" width="16" height="18" rx="2" ry="2"></rect>
                 <circle cx="12" cy="10" r="2"></circle>
-                <line x1="12" y1="14" x2="12" y2="14"></line>
               </g>
               <g v-if="cat.icon === 'cable'">
                 <path d="M4 22l4-10 4 10M12 22l4-10 4 10"></path>
@@ -155,12 +154,20 @@ const selectCategory = (category: Category | null) => {
 </script>
 
 <style scoped>
+/* Reset específico para este componente */
+.category-nav * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .category-nav {
   background: #ffffff;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 30px;
   box-shadow: 0 4px 20px rgba(13, 24, 33, 0.08);
+  font-family: inherit;
 }
 
 .nav-header {
@@ -182,6 +189,7 @@ const selectCategory = (category: Category | null) => {
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
+  font-size: 0.95rem;
 }
 
 .menu-toggle:hover {
@@ -196,6 +204,7 @@ const selectCategory = (category: Category | null) => {
 
 .menu-text {
   font-size: 0.95rem;
+  color: #F0F4EF;
 }
 
 .quick-filters {
@@ -216,6 +225,7 @@ const selectCategory = (category: Category | null) => {
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
+  font-size: 0.95rem;
 }
 
 .tab-icon {
@@ -246,60 +256,138 @@ const selectCategory = (category: Category | null) => {
   gap: 12px;
 }
 
+/* BOTÓN DE CATEGORÍA - ESTADO NORMAL */
 .category-btn {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: #F0F4EF;
-  border: 2px solid transparent;
+  background: #F0F4EF !important;
+  border: 2px solid #B4CDED !important;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
+  /* Forzar color de texto oscuro */
+  color: #0D1821 !important;
+  font-size: 0.95rem;
+  font-family: inherit;
+  line-height: 1.5;
 }
 
-.category-btn:hover {
-  background: #B4CDED;
-  transform: translateX(5px);
-}
-
-.category-btn.active {
-  background: linear-gradient(135deg, #344966 0%, #0D1821 100%);
-  color: #F0F4EF;
-}
-
-.category-icon-svg {
+/* ICONO SVG - ESTADO NORMAL */
+.category-btn svg.category-icon-svg {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
+  stroke: #344966 !important;
+  color: #344966 !important;
 }
 
-.category-name {
+/* NOMBRE - ESTADO NORMAL */
+.category-btn span.category-name {
   flex: 1;
   font-weight: 600;
   font-size: 0.95rem;
+  color: #0D1821 !important;
 }
 
-.category-count {
-  background: rgba(13, 24, 33, 0.1);
+/* CONTADOR - ESTADO NORMAL */
+.category-btn span.category-count {
+  background: #344966 !important;
+  color: #F0F4EF !important;
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 700;
 }
 
-.category-btn.active .category-count {
-  background: rgba(240, 244, 239, 0.2);
+/* HOVER - ESTADO HOVER */
+.category-btn:hover {
+  background: #B4CDED !important;
+  border-color: #344966 !important;
+  transform: translateX(5px);
 }
 
+.category-btn:hover svg.category-icon-svg {
+  stroke: #0D1821 !important;
+  color: #0D1821 !important;
+}
+
+.category-btn:hover span.category-name {
+  color: #0D1821 !important;
+}
+
+.category-btn:hover span.category-count {
+  background: #0D1821 !important;
+  color: #F0F4EF !important;
+}
+
+/* ACTIVE - ESTADO ACTIVO/SELECCIONADO */
+.category-btn.active {
+  background: linear-gradient(135deg, #344966 0%, #0D1821 100%) !important;
+  border-color: transparent !important;
+}
+
+.category-btn.active svg.category-icon-svg {
+  stroke: #BFCC94 !important;
+  color: #BFCC94 !important;
+}
+
+.category-btn.active span.category-name {
+  color: #F0F4EF !important;
+}
+
+.category-btn.active span.category-count {
+  background: #BFCC94 !important;
+  color: #0D1821 !important;
+}
+
+/* ALL BTN - ESTADO NORMAL */
 .all-btn {
-  background: linear-gradient(135deg, #BFCC94 0%, #B4CDED 100%);
-  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #BFCC94 0%, #B4CDED 100%) !important;
+  border-color: transparent !important;
 }
 
+.all-btn svg.category-icon-svg {
+  stroke: #0D1821 !important;
+  color: #0D1821 !important;
+}
+
+.all-btn span.category-name {
+  color: #0D1821 !important;
+  font-weight: 700;
+}
+
+.all-btn span.category-count {
+  background: #0D1821 !important;
+  color: #F0F4EF !important;
+}
+
+/* ALL BTN - HOVER */
+.all-btn:hover {
+  background: linear-gradient(135deg, #B4CDED 0%, #BFCC94 100%) !important;
+  border-color: #0D1821 !important;
+}
+
+/* ALL BTN - ACTIVE */
 .all-btn.active {
-  background: linear-gradient(135deg, #344966 0%, #0D1821 100%);
+  background: linear-gradient(135deg, #344966 0%, #0D1821 100%) !important;
+  border-color: transparent !important;
+}
+
+.all-btn.active svg.category-icon-svg {
+  stroke: #BFCC94 !important;
+  color: #BFCC94 !important;
+}
+
+.all-btn.active span.category-name {
+  color: #F0F4EF !important;
+}
+
+.all-btn.active span.category-count {
+  background: #BFCC94 !important;
+  color: #0D1821 !important;
 }
 
 .slide-enter-active,

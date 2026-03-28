@@ -245,80 +245,133 @@ const selectCategory = (category: Category | null) => {
   gap: 12px;
 }
 
+/* ESTILOS BASE DEL BOTÓN - estado normal */
 .category-btn {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 16px;
   background: #F0F4EF;
-  border: 2px solid transparent;
+  border: 2px solid #B4CDED;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
-  color: #0D1821; /* COLOR DE TEXTO CORREGIDO - siempre visible */
 }
 
-.category-btn:hover {
-  background: #B4CDED;
-  transform: translateX(5px);
-  border-color: #344966;
-}
-
-.category-btn.active {
-  background: linear-gradient(135deg, #344966 0%, #0D1821 100%);
-  color: #F0F4EF;
-  border-color: transparent;
-}
-
-.category-icon-svg {
+/* ICONO - estado normal */
+.category-btn .category-icon-svg {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-  color: #344966; /* COLOR DE ICONO CORREGIDO */
+  stroke: #344966 !important;
+  color: #344966 !important;
 }
 
-.category-btn.active .category-icon-svg {
-  color: #F0F4EF;
-}
-
-.category-name {
+/* NOMBRE - estado normal */
+.category-btn .category-name {
   flex: 1;
   font-weight: 600;
   font-size: 0.95rem;
-  color: #0D1821; /* COLOR DE NOMBRE CORREGIDO - siempre visible */
+  color: #0D1821 !important;
 }
 
-.category-btn.active .category-name {
-  color: #F0F4EF;
-}
-
-.category-count {
-  background: rgba(13, 24, 33, 0.1);
-  color: #344966; /* COLOR DE CONTADOR CORREGIDO */
+/* CONTADOR - estado normal */
+.category-btn .category-count {
+  background: #344966;
+  color: #F0F4EF !important;
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 700;
 }
 
-.category-btn.active .category-count {
-  background: rgba(240, 244, 239, 0.2);
-  color: #F0F4EF;
+/* HOVER - estado hover */
+.category-btn:hover {
+  background: #B4CDED;
+  border-color: #344966;
+  transform: translateX(5px);
 }
 
+.category-btn:hover .category-icon-svg {
+  stroke: #0D1821 !important;
+  color: #0D1821 !important;
+}
+
+.category-btn:hover .category-name {
+  color: #0D1821 !important;
+}
+
+.category-btn:hover .category-count {
+  background: #0D1821;
+  color: #F0F4EF !important;
+}
+
+/* ACTIVE - estado activo/seleccionado */
+.category-btn.active {
+  background: linear-gradient(135deg, #344966 0%, #0D1821 100%);
+  border-color: transparent;
+}
+
+.category-btn.active .category-icon-svg {
+  stroke: #BFCC94 !important;
+  color: #BFCC94 !important;
+}
+
+.category-btn.active .category-name {
+  color: #F0F4EF !important;
+}
+
+.category-btn.active .category-count {
+  background: #BFCC94;
+  color: #0D1821 !important;
+}
+
+/* ALL BTN - estado normal */
 .all-btn {
   background: linear-gradient(135deg, #BFCC94 0%, #B4CDED 100%);
-  color: #0D1821;
+  border-color: transparent;
 }
 
+.all-btn .category-icon-svg {
+  stroke: #0D1821 !important;
+  color: #0D1821 !important;
+}
+
+.all-btn .category-name {
+  color: #0D1821 !important;
+  font-weight: 700;
+}
+
+.all-btn .category-count {
+  background: #0D1821;
+  color: #F0F4EF !important;
+}
+
+/* ALL BTN - hover */
 .all-btn:hover {
   background: linear-gradient(135deg, #B4CDED 0%, #BFCC94 100%);
+  border-color: #0D1821;
 }
 
+/* ALL BTN - active */
 .all-btn.active {
   background: linear-gradient(135deg, #344966 0%, #0D1821 100%);
-  color: #F0F4EF;
+  border-color: transparent;
+}
+
+.all-btn.active .category-icon-svg {
+  stroke: #BFCC94 !important;
+  color: #BFCC94 !important;
+}
+
+.all-btn.active .category-name {
+  color: #F0F4EF !important;
+}
+
+.all-btn.active .category-count {
+  background: #BFCC94;
+  color: #0D1821 !important;
 }
 
 .slide-enter-active,
