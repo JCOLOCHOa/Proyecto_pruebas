@@ -3,17 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build",
+"scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "type-check": "nuxt typecheck",
     "lint": "run-s lint:*",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/",
-    "deploy": "gh-pages -d dist"
+    "format": "prettier --write .",
+    "deploy": "gh-pages -d .output/public"
   },
   "dependencies": {
     "gh-pages": "^6.3.0",
@@ -35,6 +36,7 @@
     "jiti": "^2.6.1",
     "npm-run-all": "^4.1.5",
     "npm-run-all2": "^8.0.4",
+    "nuxt": "^4.4.2",
     "oxlint": "~1.51.0",
     "prettier": "3.8.1",
     "typescript": "~5.9.3",
