@@ -647,7 +647,33 @@ const _inlineRuntimeConfig = {
       }
     }
   },
-  "public": {}
+  "public": {
+    "supabase": {
+      "url": "https://ayemhtzcmslfeockcovc.supabase.co",
+      "key": "sb_publishable_j706W4wd581YRyM65TQILQ_wKmGjtZx",
+      "redirect": false,
+      "redirectOptions": {
+        "login": "/login",
+        "callback": "/confirm",
+        "exclude": [],
+        "cookieRedirect": false,
+        "saveRedirectToCookie": false
+      },
+      "cookieName": "sb",
+      "cookiePrefix": "sb-ayemhtzcmslfeockcovc-auth-token",
+      "useSsrCookies": true,
+      "cookieOptions": {
+        "maxAge": 28800,
+        "sameSite": "lax",
+        "secure": true
+      },
+      "clientOptions": {}
+    }
+  },
+  "supabase": {
+    "serviceKey": "",
+    "secretKey": ""
+  }
 };
 const envOptions = {
   prefix: "NITRO_",

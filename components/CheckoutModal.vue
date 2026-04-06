@@ -96,6 +96,8 @@
 import { ref, computed } from 'vue'
 import { jsPDF } from 'jspdf'
 
+const supabase = useSupabaseClient()
+
 const props = defineProps<{
   cart: any[]
 }>()
@@ -281,8 +283,40 @@ const generatePDF = async () => {
     doc.text('factura electronica', 105, yPos + 15, { align: 'center' })
     doc.text('ELECTRONICOS', 105, yPos + 20, { align: 'center' })
 
-    // Guardar PDF
+    // Guardar PDF (opcional, lo dejamos así o en background)
     doc.save(`Factura-${invoiceNumber}.pdf`)
+
+    // GRABAR EN SUPABASE
+    // 1. Crear Orden
+    const { data: orderParams, error: orderError } = await supabase.from('orders').insert({
+      customer_name: form.value.name,
+      customer_email: form.value.email,
+      customer_phone: form.value.phone,
+      customer_address: form.value.address,
+      customer_nit: form.value.nit,
+      total: total.value
+    }).select().single()
+
+    if (orderError) throw orderError
+
+    // 2. Crear los ítems de la orden y restar inventario
+    const orderItems = props.cart.map(item => ({
+      order_id: orderParams.id,
+      product_id: item.id,
+      qty: item.qty,
+      price: item.price
+    }))
+
+    const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
+    if (itemsError) throw itemsError
+
+    // 3. Restar inventario (Llamando un Stored Procedure en Supabase)
+    for (const item of props.cart) {
+      await supabase.rpc('decrement_stock', {
+        p_id: item.id,
+        p_qty: item.qty
+      })
+    }
 
     step.value = 2
   } catch (error) {

@@ -57,8 +57,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
-import { productsData, type Category } from '../data/products';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { type Category } from '../data/products';
 // 🚀 ¡Magia de Nuxt! Hemos eliminado los imports de SearchBar, ProductList, Cart, etc.
 
 interface Product {
@@ -75,15 +75,52 @@ interface CartItem extends Product {
   qty: number;
 }
 
-const products = ref<Product[]>(productsData);
+const supabase = useSupabaseClient();
+const products = ref<Product[]>([]);
 const cart = ref<CartItem[]>([]);
 const searchText = ref('');
 const showCheckout = ref(false);
 const selectedCategory = ref<Category | null>(null);
 const activeTab = ref('all');
 
-// 🛠️ Solución del error 500: Le decimos a Nuxt que espere a estar en el navegador
+// Función para cargar los productos inicialmente
+const fetchProducts = async () => {
+  const { data } = await supabase
+    .from('products')
+    .select('*')
+    .order('id');
+
+  if (data) {
+    products.value = data as Product[];
+  }
+};
+
+let realtimeChannel: ReturnType<typeof supabase.channel>;
+
+// 🛠️ Solución del error 500 y Setup Realtime
 onMounted(() => {
+  fetchProducts();
+
+  // Suscripción a Realtime para la tabla products
+  realtimeChannel = supabase.channel('custom-all-channel')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'products' },
+      (payload: any) => {
+        if (payload.eventType === 'UPDATE') {
+          const index = products.value.findIndex(p => p.id === payload.new.id);
+          if (index !== -1) {
+            products.value[index] = payload.new as Product;
+          }
+        } else if (payload.eventType === 'INSERT') {
+          products.value.push(payload.new as Product);
+        } else if (payload.eventType === 'DELETE') {
+          products.value = products.value.filter(p => p.id !== payload.old.id);
+        }
+      }
+    )
+    .subscribe();
+
   const savedCart = localStorage.getItem('cart');
   if (savedCart) {
     try {
@@ -91,6 +128,12 @@ onMounted(() => {
     } catch (e) {
       console.error('Error parsing cart:', e);
     }
+  }
+});
+
+onUnmounted(() => {
+  if (realtimeChannel) {
+    supabase.removeChannel(realtimeChannel);
   }
 });
 
